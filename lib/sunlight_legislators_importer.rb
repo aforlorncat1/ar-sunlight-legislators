@@ -1,13 +1,19 @@
 require 'csv'
+require_relative '../app/models/legislator'
 
 class SunlightLegislatorsImporter
-  def self.import(filename)
-    csv = CSV.new(File.open(filename), :headers => true)
+  def self.import
+    csv = CSV.new(File.open(File.dirname(__FILE__) + "/../db/data/legislators.csv"), :headers => true)
+    Legislator.transaction do
     csv.each do |row|
+      options = Hash.new
       row.each do |field, value|
+        options[field.intern] = value
         # TODO: begin
-        raise NotImplementedError, "TODO: figure out what to do with this row and do it!"
+       # raise NotImplementedError, "TODO: figure out what to do with this row and do it!"
         # TODO: end
+        end
+        Legislator.create!(options)
       end
     end
   end
@@ -23,3 +29,5 @@ end
 # rescue NotImplementedError => e
 #   $stderr.puts "You shouldn't be running this until you've modified it with your implementation!"
 # end
+
+
